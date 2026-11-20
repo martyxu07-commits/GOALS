@@ -1,0 +1,1158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#1b1b3a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Pixel Goals">
+  <title>Pixel Goals</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+/* ============ Pixel Goals — theme colors are set from app.js ============ */
+:root {
+  --bg: #1b1b3a; --bg-2: #222244; --card: #fff4f2; --accent: #e63946; --hi: #ffb7c5;
+  --text: #1b1b3a; --cell: #f0e6e6; --done: #e63946; --miss: #d6c8cc; --ring: #ffb7c5;
+  --on-bg: #fff4f2; --on-accent: #fff4f2; --on-done: #fff4f2; --on-miss: #1b1b3a; --accent-text: #c5303c;
+  --pixel: 'Press Start 2P', ui-monospace, Menlo, Consolas, monospace;
+  --body: 'Silkscreen', ui-monospace, Menlo, Consolas, monospace;
+  --b: 4px; /* border width */
+}
+
+* { box-sizing: border-box; border-radius: 0 !important; image-rendering: pixelated; }
+html { -webkit-text-size-adjust: 100%; }
+[hidden] { display: none !important; }
+body {
+  margin: 0;
+  padding: 16px 16px calc(32px + env(safe-area-inset-bottom));
+  background-color: var(--bg);
+  background-image: repeating-conic-gradient(var(--bg-2) 0 25%, transparent 0 50%);
+  background-size: 8px 8px;
+  color: var(--on-bg);
+  font: 15px/1.5 var(--body);
+  -webkit-font-smoothing: none;
+  transition: background-color .4s steps(4), color .4s steps(4);
+}
+h1, h2, h3, button, legend, summary { font-family: var(--pixel); font-weight: normal; }
+button { cursor: pointer; color: inherit; }
+:focus-visible { outline: 3px dashed var(--hi); outline-offset: 3px; }
+main, .banner { max-width: 760px; margin: 0 auto; }
+section { margin-top: 32px; }
+.pix { width: 1em; height: 1em; display: inline-block; vertical-align: -0.1em; }
+
+/* ---------- Banner ---------- */
+.banner { background: var(--card); color: var(--text); border: var(--b) solid var(--text); box-shadow: 6px 6px 0 var(--accent); }
+.scene-wrap { position: relative; border-bottom: var(--b) solid var(--text); line-height: 0; }
+#scene { width: 100%; height: auto; aspect-ratio: 3 / 1; display: block; image-rendering: pixelated; image-rendering: crisp-edges; image-rendering: pixelated; }
+.pv {
+  position: absolute; bottom: 8px; width: 40px; height: 40px; padding: 0;
+  display: grid; place-items: center; font-size: 14px;
+  background: var(--card); color: var(--text); border: 3px solid var(--text); box-shadow: 3px 3px 0 var(--text);
+}
+.pv:active { transform: translate(3px, 3px); box-shadow: none; }
+.pv-prev { left: 8px; } .pv-next { right: 8px; }
+.banner-info { padding: 14px 16px 16px; }
+.greet { margin: 0; font: 14px/1.6 var(--pixel); color: var(--accent-text); }
+.cursor { display: inline-block; width: .6em; height: 1em; margin-left: 6px; vertical-align: -2px; background: currentColor; animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+h1 { margin: 10px 0 6px; font-size: clamp(18px, 5vw, 26px); line-height: 1.3; text-transform: uppercase; }
+h1 small { font-size: .5em; opacity: .8; white-space: nowrap; }
+.date { margin: 0; font-size: 14px; }
+.pv-bar { margin: 12px 0 0; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font: 10px/1.6 var(--pixel); color: var(--accent-text); }
+
+/* ---------- Buttons ---------- */
+.btn {
+  font-size: 11px; line-height: 1.4; padding: 12px 14px; min-height: 44px;
+  background: var(--accent); color: var(--on-accent);
+  border: var(--b) solid var(--text); box-shadow: 4px 4px 0 var(--text);
+  transition: transform .05s steps(1);
+}
+.btn:active { transform: translate(4px, 4px); box-shadow: none; }
+.btn.small { font-size: 8px; padding: 8px 10px; min-height: 0; box-shadow: 3px 3px 0 var(--text); }
+.btn.ghost { background: var(--cell); color: var(--text); }
+section > .btn, .sec-head .btn, .backup .btn { box-shadow: 4px 4px 0 var(--on-bg); }
+.mini {
+  font-size: 8px; padding: 8px; min-height: 36px; min-width: 44px;
+  background: var(--cell); color: var(--text); border: 3px solid var(--text);
+}
+.mini:active { transform: translate(2px, 2px); }
+.row { display: flex; gap: 14px; flex-wrap: wrap; }
+.row.end { justify-content: flex-end; }
+
+/* ---------- Section headings ---------- */
+h2 { font-size: 14px; margin: 0 0 14px; letter-spacing: 1px; }
+.count { color: var(--hi-text); margin-left: 6px; }
+.sec-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px; }
+.sec-head h2 { margin: 0; }
+.empty { margin: 0; padding: 18px; text-align: center; border: var(--b) dashed var(--on-bg); opacity: .85; }
+
+/* ---------- Today ---------- */
+.today-list { display: grid; gap: 12px; }
+.t-item {
+  display: grid; grid-template-columns: 44px 1fr 52px; align-items: center; gap: 12px;
+  width: 100%; min-height: 72px; padding: 10px 12px; text-align: left;
+  background: var(--card); color: var(--text); border: var(--b) solid var(--text); box-shadow: 5px 5px 0 var(--accent);
+  font-family: var(--body);
+}
+.t-item:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 var(--accent); }
+.t-emoji { font-size: 28px; line-height: 1; text-align: center; }
+.t-emoji .pix, .g-emoji .pix { color: var(--accent-text); }
+.t-name { font-size: 17px; line-height: 1.3; overflow-wrap: anywhere; }
+.t-name small { display: block; margin-top: 4px; font-size: 12px; opacity: .8; }
+.t-box {
+  width: 52px; height: 52px; display: grid; place-items: center; font-size: 28px;
+  background: var(--cell); border: var(--b) solid var(--text);
+}
+.t-item.s1 .t-box { background: var(--done); color: var(--on-done); }
+.t-item.s2 .t-box { background: var(--miss); color: var(--on-miss); }
+.t-item.s1 { background: color-mix(in srgb, var(--card) 85%, var(--done)); }
+
+/* ---------- Goal cards ---------- */
+.goal-list { display: grid; gap: 22px; }
+.goal {
+  background: var(--card); color: var(--text); padding: 14px;
+  border: var(--b) solid var(--text); box-shadow: 6px 6px 0 var(--accent);
+}
+.goal.done-goal { box-shadow: 6px 6px 0 var(--miss); }
+.g-head { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: start; }
+.g-emoji { font-size: 26px; line-height: 1.2; }
+.g-title { min-width: 0; }
+h3 { font-size: 12px; line-height: 1.5; margin: 4px 0 4px; overflow-wrap: anywhere; }
+.g-meta { margin: 0; font-size: 12px; opacity: .8; }
+.g-actions { display: flex; gap: 6px; }
+
+.days {
+  display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 5px;
+  max-width: 440px; margin: 14px 0;
+}
+.wd { font: 8px/1 var(--pixel); text-align: center; padding: 4px 0; opacity: .7; }
+.wd.now { opacity: 1; background: var(--ring); color: var(--text); }
+.day {
+  position: relative; aspect-ratio: 1; min-height: 36px; padding: 0;
+  display: grid; place-items: center; font-size: 20px;
+  background: var(--cell); color: var(--text); border: 3px solid var(--text);
+}
+.day .dnum { position: absolute; top: 3px; left: 3px; font: 7px/1 var(--pixel); }
+.day .pix { width: 55%; height: 55%; margin-top: 4px; }
+.day.s1 { background: var(--done); color: var(--on-done); }
+.day.s2 { background: var(--miss); color: var(--on-miss); }
+.day.today { outline: 4px solid var(--ring); outline-offset: 1px; z-index: 1; }
+.day.today .dnum { background: var(--text); color: var(--card); padding: 1px; top: 1px; left: 1px; }
+.day:disabled { opacity: .35; cursor: default; border-style: dashed; }
+.day:not(:disabled):active { transform: translate(2px, 2px); }
+
+/* Chunky segmented progress bar */
+.bar { height: 26px; border: var(--b) solid var(--text); background: var(--cell); padding: 3px; }
+.bar i {
+  display: block; height: 100%; max-width: 100%;
+  background: repeating-linear-gradient(90deg, var(--done) 0 12px, transparent 12px 15px);
+  transition: width .4s steps(6);
+}
+.stats { display: flex; flex-wrap: wrap; gap: 6px 16px; margin-top: 10px; font-size: 13px; }
+.stats b { font: 10px/1.9 var(--pixel); color: var(--accent-text); }
+.flame { color: var(--accent-text); }
+
+/* Pop when a day is ticked */
+.pop, .t-item.pop .t-box { animation: pop .3s steps(3); }
+.t-item.pop { animation: none; }
+@keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.3); } 100% { transform: scale(1); } }
+
+/* ---------- Archive ---------- */
+details summary { list-style: none; cursor: pointer; }
+details summary::-webkit-details-marker { display: none; }
+details summary h2 { display: inline-block; }
+details summary h2::before { content: '▶ '; display: inline-block; font-size: 10px; }
+details[open] summary h2::before { content: '▼ '; }
+details .goal-list { margin-top: 6px; }
+
+/* ---------- Backup ---------- */
+.backup p { margin: 0 0 16px; }
+
+/* ---------- Dialog ---------- */
+dialog {
+  width: min(92vw, 460px); max-height: 92vh; overflow: auto; padding: 18px;
+  background: var(--card); color: var(--text); border: var(--b) solid var(--text); box-shadow: 8px 8px 0 var(--accent);
+}
+dialog::backdrop { background: rgba(0, 0, 0, .65); }
+dialog h2 { font-size: 13px; }
+.field { display: block; margin: 0 0 14px; padding: 0; border: 0; font: 9px/1.6 var(--pixel); }
+.field small { font: 12px var(--body); opacity: .7; }
+legend { padding: 0; margin-bottom: 6px; font-size: 9px; }
+input[type="text"], input[type="date"] {
+  display: block; width: 100%; margin-top: 6px; padding: 10px;
+  font: 16px var(--body); color: var(--text); background: var(--cell);
+  border: 3px solid var(--text); appearance: none; -webkit-appearance: none; min-height: 46px;
+}
+input:focus { outline: 3px solid var(--ring); outline-offset: 1px; }
+.emoji-picks { display: flex; flex-wrap: wrap; gap: 6px; margin: -6px 0 16px; }
+.pick { width: 40px; height: 40px; font-size: 20px; padding: 0; background: var(--cell); border: 3px solid var(--text); }
+.pick:active { transform: translate(2px, 2px); }
+.seg { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.seg input { position: absolute; opacity: 0; pointer-events: none; }
+.seg span {
+  display: block; padding: 12px 4px; text-align: center; font: 9px/1.4 var(--pixel);
+  background: var(--cell); border: 3px solid var(--text); cursor: pointer;
+}
+.seg input:checked + span { background: var(--accent); color: var(--on-accent); box-shadow: inset 0 -4px 0 rgba(0, 0, 0, .25); }
+.seg input:focus-visible + span { outline: 3px dashed var(--ring); outline-offset: 2px; }
+.dates { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hint { margin: 0 0 8px; font-size: 13px; opacity: .85; }
+.error { margin: 0 0 8px; min-height: 1em; font-size: 13px; color: var(--accent-text); }
+
+/* ---------- Small screens ---------- */
+@media (max-width: 420px) {
+  body { padding-left: 12px; padding-right: 12px; }
+  .banner-info { padding: 12px; }
+  .greet { font-size: 12px; }
+  .goal { padding: 12px; }
+  .days { gap: 4px; }
+  .g-actions { flex-direction: column; }
+  .stats { font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before { animation: none !important; transition: none !important; }
+}
+</style>
+</head>
+<body>
+  <!-- Banner: pixel scene + place info -->
+  <header class="banner">
+    <div class="scene-wrap">
+      <canvas id="scene" width="192" height="64" aria-hidden="true"></canvas>
+      <button class="pv pv-prev" id="pv-prev" type="button" aria-label="Preview previous place"></button>
+      <button class="pv pv-next" id="pv-next" type="button" aria-label="Preview next place"></button>
+    </div>
+    <div class="banner-info">
+      <p class="greet"><span id="greet"></span><span class="cursor" aria-hidden="true"></span></p>
+      <h1 id="place"></h1>
+      <p class="date" id="date"></p>
+      <p class="pv-bar" id="pv-bar" hidden>
+        <span id="pv-label"></span>
+        <button class="btn small" id="pv-reset" type="button">BACK TO TODAY</button>
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <!-- Quick check-off for today -->
+    <section class="today" aria-labelledby="today-h">
+      <h2 id="today-h">TODAY <span id="today-count" class="count"></span></h2>
+      <div id="today-list" class="today-list"></div>
+    </section>
+
+    <!-- Active + upcoming goals -->
+    <section aria-labelledby="goals-h">
+      <div class="sec-head">
+        <h2 id="goals-h">GOALS</h2>
+        <button class="btn" id="add-btn" type="button">+ NEW</button>
+      </div>
+      <div id="goal-list" class="goal-list"></div>
+    </section>
+
+    <!-- Finished goals -->
+    <section id="archive" hidden>
+      <details>
+        <summary><h2>ARCHIVE <span id="archive-count" class="count"></span></h2></summary>
+        <div id="archive-list" class="goal-list"></div>
+      </details>
+    </section>
+
+    <!-- Backup -->
+    <section class="backup" aria-labelledby="backup-h">
+      <h2 id="backup-h">BACKUP</h2>
+      <p>Your goals live only in this browser. Export a copy now and then.</p>
+      <div class="row">
+        <button class="btn" id="export-btn" type="button">EXPORT DATA</button>
+        <button class="btn" id="import-btn" type="button">IMPORT DATA</button>
+        <input type="file" id="import-file" accept="application/json,.json" hidden>
+      </div>
+    </section>
+  </main>
+
+  <!-- New / edit goal form -->
+  <dialog id="goal-dialog" aria-labelledby="form-title">
+    <form id="goal-form" novalidate>
+      <h2 id="form-title">NEW GOAL</h2>
+      <label class="field">NAME
+        <input id="f-name" type="text" maxlength="40" autocomplete="off" placeholder="Run 20 minutes">
+      </label>
+      <label class="field">EMOJI <small>(optional)</small>
+        <input id="f-emoji" type="text" maxlength="8" autocomplete="off" placeholder="🎯">
+      </label>
+      <div class="emoji-picks" id="emoji-picks"></div>
+      <fieldset class="field">
+        <legend>PERIOD</legend>
+        <div class="seg">
+          <label><input type="radio" name="period" value="weekly" checked><span>WEEKLY</span></label>
+          <label><input type="radio" name="period" value="monthly"><span>MONTHLY</span></label>
+          <label><input type="radio" name="period" value="custom"><span>CUSTOM</span></label>
+        </div>
+      </fieldset>
+      <div id="custom-dates" class="dates" hidden>
+        <label class="field">START<input id="f-start" type="date"></label>
+        <label class="field">END<input id="f-end" type="date"></label>
+      </div>
+      <p class="hint" id="form-hint"></p>
+      <p class="error" id="form-error" role="alert"></p>
+      <div class="row end">
+        <button type="button" class="btn ghost" id="cancel-btn">CANCEL</button>
+        <button type="submit" class="btn">SAVE</button>
+      </div>
+    </form>
+  </dialog>
+<script>
+'use strict';
+
+/* =====================================================================
+   PLACES — one object per place. To add a place, add one object here.
+   colors: bg (page), card, accent, text, hi (highlight).
+   scene:  list of [shape, x, options] drawn left→right on a 192×64 grid.
+           Shapes are in SHAPES below. Common options:
+             y   — lift the shape off the ground (px)
+             col — color key: main | far | acc | hi | light | sand | green
+   ===================================================================== */
+const PLACES = [
+  { city: 'Tokyo', country: 'Japan', greeting: 'Konnichiwa',
+    colors: { bg: '#1b1b3a', card: '#fff4f2', accent: '#e63946', text: '#1b1b3a', hi: '#ffb7c5' },
+    scene: [['peak', 92, { h: 32 }], ['skyline', 0, { w: 120 }], ['tower', 40, { h: 48, col: 'acc', stripes: true }], ['skyscrapers', 110, { w: 50 }]] },
+  { city: 'Paris', country: 'France', greeting: 'Bonjour',
+    colors: { bg: '#2d3047', card: '#fdf6ec', accent: '#3d5a80', text: '#2d3047', hi: '#f4a6b7' },
+    scene: [['hills', 0], ['houses', 4, { n: 7 }], ['tower', 88, { h: 52 }], ['houses', 120, { n: 7 }]] },
+  { city: 'New York', country: 'USA', greeting: 'Hey there',
+    colors: { bg: '#1c1c1c', card: '#fff8e1', accent: '#f7c300', text: '#1c1c1c', hi: '#ff6b35' },
+    scene: [['skyline', 0, { w: 192 }], ['skyscrapers', 6, { w: 84, spire: true }], ['water'], ['bridge', 100, { w: 92 }]] },
+  { city: 'Vancouver', country: 'Canada', greeting: 'Hello',
+    colors: { bg: '#0f3b3a', card: '#eef7f2', accent: '#2a9d8f', text: '#0f2b2a', hi: '#e9c46a' },
+    scene: [['mountains', 0], ['skyline', 20, { w: 120 }], ['skyscrapers', 50, { w: 50 }], ['water'], ['boat', 150]] },
+  { city: 'Cairo', country: 'Egypt', greeting: 'Ahlan',
+    colors: { bg: '#3b2412', card: '#fbefd5', accent: '#d4a24c', text: '#3b2412', hi: '#1f8a8a' },
+    scene: [['pyramids', 6], ['skyline', 110, { w: 82, h: 10 }], ['palm', 118, { h: 20 }], ['palm', 140, { h: 15 }], ['palm', 168, { h: 22 }]] },
+  { city: 'Rio', country: 'Brazil', greeting: 'Olá',
+    colors: { bg: '#0b4f3c', card: '#fffbe6', accent: '#ffcc00', text: '#0b3b2e', hi: '#00a6d6' },
+    scene: [['statue', 14], ['sugarloaf', 132, { h: 32 }], ['palm', 80, { h: 16 }], ['palm', 96, { h: 20 }], ['water'], ['boat', 60]] },
+  { city: 'Sydney', country: 'Australia', greeting: "G'day",
+    colors: { bg: '#0a3d62', card: '#f5f9fc', accent: '#f08a24', text: '#0a2a43', hi: '#4fc3f7' },
+    scene: [['skyline', 96, { w: 96 }], ['water'], ['archbridge', 104, { w: 84 }], ['opera', 18]] },
+  { city: 'Seoul', country: 'South Korea', greeting: 'Annyeong',
+    colors: { bg: '#222a54', card: '#f7f4ee', accent: '#cd2e3a', text: '#1d2350', hi: '#ffd166' },
+    scene: [['mountains', 0], ['hills', 100, { w: 92, col: 'main' }], ['needle', 136, { h: 30, y: 12 }], ['skyline', 0, { w: 100 }], ['pagoda', 36, { t: 2, wide: true }]] },
+  { city: 'Rome', country: 'Italy', greeting: 'Ciao',
+    colors: { bg: '#5a2e1a', card: '#fbf1e1', accent: '#c0582a', text: '#3e1f10', hi: '#e8b04a' },
+    scene: [['hills', 0], ['dome', 124, { m: false }], ['colosseum', 26], ['houses', 84, { n: 3 }], ['palm', 170, { h: 14 }]] },
+  { city: 'Reykjavik', country: 'Iceland', greeting: 'Halló',
+    colors: { bg: '#0b1d2a', card: '#e8f1f5', accent: '#3fbfa0', text: '#0b1d2a', hi: '#8be9c5' },
+    scene: [['aurora'], ['mountains', 0], ['houses', 14, { n: 5 }], ['church', 76], ['houses', 128, { n: 6 }], ['water']] },
+  { city: 'Marrakech', country: 'Morocco', greeting: 'Salam',
+    colors: { bg: '#6e1e1a', card: '#fbe9d7', accent: '#d9622b', text: '#4a1410', hi: '#2a7f9e' },
+    scene: [['mountains', 0], ['wall', 0, { w: 192, col: 'sand' }], ['minaret', 86], ['palm', 30], ['palm', 50, { h: 14 }], ['palm', 130], ['palm', 156, { h: 22 }]] },
+  { city: 'Mumbai', country: 'India', greeting: 'Namaskar',
+    colors: { bg: '#3a1546', card: '#fff3e3', accent: '#ff7f11', text: '#2e0f38', hi: '#ff3c8e' },
+    scene: [['skyline', 96, { w: 96 }], ['skyscrapers', 140, { w: 40 }], ['arch', 40], ['water'], ['boat', 110]] },
+  { city: 'Istanbul', country: 'Türkiye', greeting: 'Merhaba',
+    colors: { bg: '#12355b', card: '#f6f1e7', accent: '#c8102e', text: '#12264a', hi: '#3fa7d6' },
+    scene: [['skyline', 0, { w: 192, h: 10 }], ['dome', 30], ['dome', 120, { m: false }], ['water'], ['boat', 90]] },
+  { city: 'Bangkok', country: 'Thailand', greeting: 'Sawasdee',
+    colors: { bg: '#3d0c4a', card: '#fff6dd', accent: '#e0a800', text: '#2b0a35', hi: '#ff5d8f' },
+    scene: [['skyline', 110, { w: 82 }], ['stupa', 24], ['stupa', 52], ['pagoda', 76, { t: 2 }], ['palm', 160, { h: 18 }], ['water'], ['boat', 130]] },
+  { city: 'Cape Town', country: 'South Africa', greeting: 'Molo',
+    colors: { bg: '#1e3d59', card: '#f5f0e1', accent: '#ff6e40', text: '#1e2d3d', hi: '#ffc13b' },
+    scene: [['tablemountain', 20, { w: 140 }], ['skyline', 30, { w: 100 }], ['houses', 134, { n: 6 }], ['water'], ['boat', 20]] },
+  { city: 'Mexico City', country: 'Mexico', greeting: 'Hola',
+    colors: { bg: '#2b1d4d', card: '#fff1f7', accent: '#e5007e', text: '#2b1d4d', hi: '#00a19a' },
+    scene: [['mountains', 0], ['steppyramid', 60], ['cactus', 18], ['cactus', 120], ['skyline', 140, { w: 52 }]] },
+  { city: 'London', country: 'UK', greeting: 'Hiya',
+    colors: { bg: '#1d2433', card: '#f2f2ef', accent: '#c8102e', text: '#1d2433', hi: '#2e86c1' },
+    scene: [['skyline', 0, { w: 192 }], ['wheel', 128, { r: 17 }], ['clocktower', 70, { hall: true }], ['water'], ['boat', 100]] },
+  { city: 'Dubai', country: 'UAE', greeting: 'Marhaba',
+    colors: { bg: '#2a1f14', card: '#fbf3e4', accent: '#c9a227', text: '#2a1f14', hi: '#29b6c5' },
+    scene: [['hills', 0, { col: 'sand' }], ['skyline', 40, { w: 110 }], ['skyscrapers', 110, { w: 40 }], ['burj', 90], ['palm', 16], ['palm', 168]] },
+  { city: 'Venice', country: 'Italy', greeting: 'Buongiorno',
+    colors: { bg: '#20434f', card: '#fdf3e7', accent: '#b9433b', text: '#1b2f36', hi: '#e7b75f' },
+    scene: [['houses', 0, { n: 9 }], ['clocktower', 96], ['dome', 120, { m: false }], ['water'], ['boat', 50, { gondola: true }]] },
+  { city: 'Amsterdam', country: 'Netherlands', greeting: 'Hallo',
+    colors: { bg: '#22313f', card: '#fff4ea', accent: '#ff6f00', text: '#22313f', hi: '#4a90d9' },
+    scene: [['windmill', 158], ['houses', 6, { n: 13 }], ['water'], ['boat', 44]] },
+  { city: 'Athens', country: 'Greece', greeting: 'Yassou',
+    colors: { bg: '#0d3b66', card: '#f8fbff', accent: '#1f6fb2', text: '#0d2a4a', hi: '#f4d35e' },
+    scene: [['tablemountain', 10, { w: 120, h: 14 }], ['temple', 52, { y: 14, w: 40 }], ['santorini', 130]] },
+  { city: 'Barcelona', country: 'Spain', greeting: 'Bon dia',
+    colors: { bg: '#3b1f4a', card: '#fff7e8', accent: '#e94f37', text: '#2b1736', hi: '#f6c90e' },
+    scene: [['hills', 0], ['skyline', 0, { w: 192, h: 12 }], ['spires', 84], ['palm', 30], ['palm', 50, { h: 14 }], ['palm', 150], ['water']] },
+  { city: 'San Francisco', country: 'USA', greeting: 'Hey there',
+    colors: { bg: '#2b2d42', card: '#fdf0e8', accent: '#c0362c', text: '#22243a', hi: '#f4a261' },
+    scene: [['hills', 0], ['skyline', 124, { w: 68 }], ['water'], ['bridge', 0, { w: 116, col: 'acc' }]] },
+  { city: 'Seattle', country: 'USA', greeting: 'Howdy',
+    colors: { bg: '#18332f', card: '#eef4f1', accent: '#3b7d5a', text: '#13261f', hi: '#a3d9ff' },
+    scene: [['peak', 100, { h: 30 }], ['skyline', 0, { w: 130 }], ['needle', 60, { h: 46 }], ['water']] },
+  { city: 'Kyoto', country: 'Japan', greeting: 'Ohayō',
+    colors: { bg: '#2a1a1f', card: '#faf3ea', accent: '#c73e3a', text: '#2a1a1f', hi: '#8fb339' },
+    scene: [['hills', 0], ['pagoda', 120, { t: 5 }], ['torii', 30], ['torii', 64, { h: 16 }]] },
+  { city: 'Agra', country: 'India', greeting: 'Swagatam',
+    colors: { bg: '#3a2a52', card: '#fffaf3', accent: '#8c6bb1', text: '#2a1d3d', hi: '#f7b267' },
+    scene: [['dome', 74, { col: 'light', big: true }], ['palm', 18], ['palm', 160, { h: 16 }], ['water']] },
+  { city: 'Nairobi', country: 'Kenya', greeting: 'Jambo',
+    colors: { bg: '#2e1f0f', card: '#fbf2dc', accent: '#d97a2b', text: '#2e1f0f', hi: '#6a994e' },
+    scene: [['peak', 80, { h: 22 }], ['skyline', 6, { w: 64 }], ['acacia', 84], ['acacia', 150]] },
+  { city: 'Cusco', country: 'Peru', greeting: 'Allillanchu',
+    colors: { bg: '#1f3a2d', card: '#f6f2e6', accent: '#b5651d', text: '#1a2e23', hi: '#e9c46a' },
+    scene: [['mountains', 0, { snow: false }], ['peak', 70, { h: 36, snow: false }], ['terraces', 20], ['houses', 132, { n: 6 }]] },
+  { city: 'Honolulu', country: 'Hawaii', greeting: 'Aloha',
+    colors: { bg: '#053c5e', card: '#f0fbff', accent: '#ff6f59', text: '#053049', hi: '#43aa8b' },
+    scene: [['volcano', 96], ['skyline', 24, { w: 70 }], ['palm', 8], ['palm', 160], ['palm', 176, { h: 14 }], ['water'], ['boat', 110]] },
+  { city: 'Santorini', country: 'Greece', greeting: 'Kalimera',
+    colors: { bg: '#0b3c7a', card: '#ffffff', accent: '#1565c0', text: '#0b2c5a', hi: '#ffd54f' },
+    scene: [['tablemountain', -20, { w: 170, h: 10, col: 'main' }], ['santorini', 4, { y: 10 }], ['santorini', 60, { y: 10 }], ['windmill', 160], ['water'], ['boat', 130]] },
+  { city: 'Havana', country: 'Cuba', greeting: 'Qué tal',
+    colors: { bg: '#1b4d4b', card: '#fff4e0', accent: '#ef476f', text: '#163c3a', hi: '#ffd166' },
+    scene: [['dome', 112, { m: false }], ['houses', 0, { n: 10 }], ['palm', 152], ['palm', 172, { h: 14 }], ['water']] },
+  { city: 'Edinburgh', country: 'Scotland', greeting: 'Awrite',
+    colors: { bg: '#2c2f3a', card: '#f1efe9', accent: '#5b4b8a', text: '#22242d', hi: '#c9a227' },
+    scene: [['hills', 0], ['tablemountain', 30, { w: 100, h: 14, col: 'main' }], ['castle', 56, { y: 14 }], ['houses', 136, { n: 6 }]] },
+  { city: 'Prague', country: 'Czechia', greeting: 'Ahoj',
+    colors: { bg: '#3b2c35', card: '#fbf5ee', accent: '#b5403a', text: '#2c2128', hi: '#e6b655' },
+    scene: [['hills', 0], ['castle', 16], ['spires', 86, { col: 'main' }], ['houses', 120, { n: 7 }], ['water']] },
+  { city: 'Kathmandu', country: 'Nepal', greeting: 'Namaste',
+    colors: { bg: '#1a2340', card: '#fdf7ef', accent: '#d1495b', text: '#1a2340', hi: '#edae49' },
+    scene: [['mountains', 0], ['peak', 100, { h: 40 }], ['houses', 4, { n: 5 }], ['stupa', 70, { col: 'light' }], ['pagoda', 126, { t: 3 }]] },
+  { city: 'Berlin', country: 'Germany', greeting: 'Guten Tag',
+    colors: { bg: '#1a1a1a', card: '#f4f4f4', accent: '#dd0000', text: '#1a1a1a', hi: '#ffce00' },
+    scene: [['skyline', 0, { w: 192 }], ['needle', 128, { h: 52, ball: true }], ['temple', 30, { flat: true, w: 44 }]] },
+  { city: 'Buenos Aires', country: 'Argentina', greeting: 'Buen día',
+    colors: { bg: '#1d3557', card: '#f1faee', accent: '#74acdf', text: '#1d3557', hi: '#f6b40e' },
+    scene: [['skyline', 0, { w: 192 }], ['obelisk', 88], ['houses', 120, { n: 7 }], ['houses', 4, { n: 6 }]] },
+  { city: 'Singapore', country: 'Singapore', greeting: 'Selamat pagi',
+    colors: { bg: '#0f2027', card: '#f3fbfb', accent: '#e4002b', text: '#0f2027', hi: '#2ec4b6' },
+    scene: [['skyline', 0, { w: 192 }], ['skyscrapers', 56, { w: 60 }], ['wheel', 140, { r: 15 }], ['water'], ['boat', 20]] },
+  { city: 'Lisbon', country: 'Portugal', greeting: 'Bom dia',
+    colors: { bg: '#263a5e', card: '#fff8ec', accent: '#f2b134', text: '#1f2e4a', hi: '#4ea5d9' },
+    scene: [['hills', 0], ['houses', 0, { n: 9 }], ['castle', 40, { y: 10 }], ['water'], ['bridge', 96, { w: 96, col: 'acc' }]] },
+  { city: 'Beijing', country: 'China', greeting: 'Nǐ hǎo',
+    colors: { bg: '#3a0d0d', card: '#fff6e5', accent: '#c1272d', text: '#2e0a0a', hi: '#f2c14e' },
+    scene: [['mountains', 0, { snow: false }], ['wall', 0, { w: 192, towers: 46 }], ['pagoda', 66, { t: 2, wide: true }], ['skyline', 140, { w: 52 }]] },
+];
+
+/* ===================== Small helpers ===================== */
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const MON = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+const WDAY = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const STATE_NAME = ['not marked', 'done', 'missed'];
+
+/* ===================== Colors & contrast ===================== */
+const hex2rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const rgb2hex = (c) => '#' + c.map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
+const mix = (a, b, t) => { const A = hex2rgb(a), B = hex2rgb(b); return rgb2hex(A.map((v, i) => v + (B[i] - v) * t)); };
+const lum = (h) => {
+  const [r, g, b] = hex2rgb(h).map((v) => { v /= 255; return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4; });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a, b) => { const A = lum(a), B = lum(b); return (Math.max(A, B) + 0.05) / (Math.min(A, B) + 0.05); };
+// First candidate readable on bg (WCAG AA 4.5:1), else the most readable one.
+const bestOn = (bg, cands, min = 4.5) =>
+  cands.find((c) => contrast(c, bg) >= min) || cands.reduce((a, b) => (contrast(b, bg) > contrast(a, bg) ? b : a));
+
+// Nudge a background darker/lighter until some candidate text reaches 4.5:1. Returns [bg, text].
+function fitBg(col, cands) {
+  for (const t of [0, 0.08, 0.16, 0.24, 0.32]) for (const to of ['#000000', '#ffffff']) {
+    const b = mix(col, to, t), f = cands.find((c) => contrast(c, b) >= 4.5);
+    if (f) return [b, f];
+  }
+  return [col, bestOn(col, cands)];
+}
+
+// Turn a palette into CSS variables, fixing any color pair with poor contrast.
+function themeVars(p) {
+  const c = p.colors, BW = ['#111111', '#ffffff'];
+  const text = bestOn(c.card, [c.text, c.bg, ...BW]);
+  const cell = mix(c.card, text, 0.06);
+  const [accent, onAccent] = fitBg(c.accent, [c.card, c.text, c.bg, ...BW]);
+  const [done, onDone] = fitBg(contrast(accent, cell) >= 1.8 ? accent : mix(accent, text, 0.35), [c.card, text, ...BW]);
+  const miss = mix(c.card, text, 0.25);
+  return {
+    bg: c.bg, card: c.card, accent, hi: c.hi, text, cell, done, miss,
+    'bg-2': mix(c.bg, c.card, 0.05),
+    'on-bg': bestOn(c.bg, [c.card, c.hi, ...BW]),
+    'hi-text': bestOn(c.bg, [c.hi, mix(c.hi, '#ffffff', 0.4), c.card]),
+    'on-accent': onAccent,
+    'on-done': onDone,
+    'on-miss': bestOn(miss, [text, ...BW]),
+    'accent-text': bestOn(c.card, [c.accent, mix(c.accent, text, 0.4), text]),
+    ring: contrast(c.hi, c.card) >= 2 ? c.hi : mix(c.hi, text, 0.5),
+  };
+}
+
+/* ===================== Dates (local time, 'YYYY-MM-DD') ===================== */
+const pad = (n) => String(n).padStart(2, '0');
+const ymd = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parse = (s) => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const addDays = (s, n) => { const d = parse(s); d.setDate(d.getDate() + n); return ymd(d); };
+const diffDays = (a, b) => Math.round((parse(b) - parse(a)) / 864e5);
+const todayStr = () => ymd(new Date());
+const dayOfYear = (s) => { const d = parse(s); return Math.round((d - new Date(d.getFullYear(), 0, 0)) / 864e5); };
+const fmtShort = (s) => { const d = parse(s); return `${d.getDate()} ${MON[d.getMonth()]}`; };
+const fmtLong = (s) => { const d = parse(s); return `${WDAY[d.getDay()]} ${d.getDate()} ${MON[d.getMonth()]} ${d.getFullYear()}`; };
+const weekdayIdx = (s) => (parse(s).getDay() + 6) % 7; // Monday = 0
+function weekRange(t) { const s = addDays(t, -weekdayIdx(t)); return [s, addDays(s, 6)]; }
+function monthRange(t) { const d = parse(t); return [ymd(new Date(d.getFullYear(), d.getMonth(), 1)), ymd(new Date(d.getFullYear(), d.getMonth() + 1, 0))]; }
+function dateList(a, b) { const out = []; for (let d = a; d <= b; d = addDays(d, 1)) out.push(d); return out; }
+
+/* ===================== Storage ===================== */
+const KEY = 'pixel-goals-v1';
+const DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const validGoal = (g) => g && typeof g.name === 'string' && g.name.trim() && DATE_RE.test(g.start) && DATE_RE.test(g.end) && g.start <= g.end;
+function cleanGoal(g) {
+  const marks = {};
+  for (const [d, v] of Object.entries(g.marks || {})) if (DATE_RE.test(d) && (v === 1 || v === 2)) marks[d] = v;
+  return {
+    id: String(g.id || uid()), name: g.name.trim().slice(0, 40), emoji: String(g.emoji || '').slice(0, 8),
+    period: ['weekly', 'monthly', 'custom'].includes(g.period) ? g.period : 'custom',
+    start: g.start, end: g.end, marks,
+  };
+}
+function load() {
+  try {
+    const data = JSON.parse(localStorage.getItem(KEY));
+    return Array.isArray(data?.goals) ? data.goals.filter(validGoal).map(cleanGoal) : [];
+  } catch { return []; }
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify({ version: 1, goals: state.goals })); }
+  catch { alert('Could not save: browser storage is full or blocked.'); }
+}
+
+/* ===================== Pixel icons (inline SVG from text grids) ===================== */
+function pix(rows, cls = '') {
+  let r = '';
+  rows.forEach((row, y) => [...row].forEach((ch, x) => { if (ch === '#') r += `<rect x="${x}" y="${y}" width="1" height="1"/>`; }));
+  return `<svg class="pix ${cls}" viewBox="0 0 ${rows[0].length} ${rows.length}" shape-rendering="crispEdges" fill="currentColor" aria-hidden="true">${r}</svg>`;
+}
+const ICON = {
+  check: pix(['.......', '......#', '.....##', '#...##.', '##.##..', '.###...', '..#....']),
+  cross: pix(['#.....#', '##...##', '.##.##.', '..###..', '.##.##.', '##...##', '#.....#']),
+  flame: pix(['...#...', '..##...', '..###..', '.#####.', '.##.##.', '###.###', '##...##', '.#####.'], 'flame'),
+  left: pix(['...#', '..##', '.###', '####', '.###', '..##', '...#']),
+  right: pix(['#...', '##..', '###.', '####', '###.', '##..', '#...']),
+  star: pix(['...#...', '...#...', '#######', '.#####.', '..###..', '.##.##.', '##...##']),
+};
+
+/* =====================================================================
+   PIXEL SCENES — drawn with fillRect on a 192×64 canvas, scaled up by CSS.
+   Each shape: (d, x, options, baseY). d gives px(), tri(), disc(), colors.
+   ===================================================================== */
+const W = 192, H = 64, G = 54; // canvas size and ground line
+
+function rng(seed) { // tiny deterministic random (mulberry32)
+  let a = seed >>> 0 || 1;
+  return () => { a = (a + 0x6d2b79f5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+
+const SHAPES = {
+  aurora(d) { // northern lights (night only)
+    if (d.phase !== 'night') return;
+    for (let x = 0; x < W; x++) { const y = 8 + Math.round(Math.sin(x / 13) * 4 + Math.sin(x / 4.7) * 1.5); d.px(x, y, 1, 3, d.c.aurora1); d.px(x, y + 3, 1, 6, d.c.aurora2); }
+  },
+  mountains(d, x, o, B) { // far range with snowy tips
+    [[18, 20], [52, 30], [92, 22], [132, 28], [172, 19]].forEach(([cx, h]) => {
+      d.tri(x + cx, B, h, d.c.far, 1.4);
+      if (o.snow !== false) d.tri(x + cx, B - h + 4, 4, d.c.snow, 1.4);
+    });
+  },
+  peak(d, x, o, B) { // one big volcano-style peak
+    const h = o.h || 34, s = 1.8, cx = x + Math.floor(h * 0.9), col = d.col(o, 'far');
+    d.tri(cx, B, h, col, s);
+    if (o.snow !== false) { d.tri(cx, B - h + 6, 6, d.c.snow, s); [-7, -2, 3, 7].forEach((dx, i) => d.px(cx + dx, B - h + 6, 2, 1 + (i % 2), d.c.snow)); }
+  },
+  hills(d, x, o, B) { // rolling bumps
+    const w = o.w || W, col = d.col(o, 'far');
+    for (let k = 0, hx = x; hx < x + w; k++) {
+      const r = 9 + ((k * 5) % 7), cx = hx + r;
+      for (let dy = 0; dy < r; dy++) {
+        const hw = Math.round(Math.sqrt(r * r - dy * dy) * 1.6), a = Math.max(x, cx - hw), b = Math.min(x + w, cx + hw + 1);
+        if (b > a) d.px(a, B - dy - 1, b - a, 1, col);
+      }
+      hx += r * 2;
+    }
+  },
+  sugarloaf(d, x, o, B) { // rounded rock
+    const h = o.h || 30, r = 14, cx = x + r, col = d.col(o, 'far');
+    for (let i = 0; i < h; i++) { const t = i / (h - 1), hw = Math.round(Math.sqrt(t) * r * (1 + t * 0.4)); d.px(cx - hw, B - h + i, hw * 2 + 1, 1, col); }
+  },
+  tablemountain(d, x, o, B) { // flat-topped mountain / plateau
+    const w = o.w || 110, h = o.h || 26, col = d.col(o, 'far');
+    for (let i = 0; i < h; i++) { const inset = Math.floor((h - i) * 1.2); d.px(x + inset, B - h + i, w - inset * 2, 1, col); }
+  },
+  volcano(d, x, o, B) {
+    const h = o.h || 22, cx = x + 44, col = d.col(o, 'far');
+    for (let i = 0; i < h; i++) { const hw = 5 + Math.floor(i * 1.8); d.px(cx - hw, B - h + i, hw * 2 + 1, 1, col); }
+    d.px(cx - 3, B - h, 7, 1, d.c.hole);
+  },
+  skyline(d, x, o, B) { // distant buildings
+    const w = o.w || 80, r = rng(x * 31 + 7), c = d.c;
+    for (let bx = x; bx < x + w;) {
+      const bw = 5 + Math.floor(r() * 6), bh = 8 + Math.floor(r() * (o.h || 20)), ww = Math.min(bw, x + w - bx);
+      d.px(bx, B - bh, ww, bh, c.far);
+      for (let yy = B - bh + 2; yy < B - 2; yy += 3) for (let xx = bx + 1; xx < bx + ww - 1; xx += 2) if (r() < 0.3) d.px(xx, yy, 1, 1, c.winFar);
+      if (r() < 0.2) d.px(bx + (ww >> 1), B - bh - 3, 1, 3, c.far);
+      bx += bw + (r() < 0.3 ? 1 : 0);
+    }
+  },
+  skyscrapers(d, x, o, B) { // tall front towers with windows
+    const w = o.w || 60, r = rng(x * 17 + 3), c = d.c;
+    let first = true;
+    for (let bx = x; bx < x + w;) {
+      const bw = 7 + Math.floor(r() * 6), bh = 18 + Math.floor(r() * (o.h || 22)), ww = Math.min(bw, x + w - bx);
+      if (ww < 3) break;
+      d.px(bx, B - bh, ww, bh, c.main);
+      if (first && o.spire) { d.px(bx + 2, B - bh - 5, ww - 4, 5, c.main); d.px(bx + (ww >> 1) - 1, B - bh - 11, 2, 6, c.main); d.px(bx + (ww >> 1), B - bh - 16, 1, 5, c.main); }
+      else if (r() < 0.4) d.px(bx + 1, B - bh - 2, ww - 2, 2, c.main);
+      for (let yy = B - bh + 2; yy < B - 3; yy += 3) for (let xx = bx + 2; xx < bx + ww - 2; xx += 2) if (r() < 0.5) d.px(xx, yy, 1, 2, c.win);
+      bx += bw + 1; first = false;
+    }
+  },
+  tower(d, x, o, B) { // lattice tower
+    const h = o.h || 44, cx = x + 9, col = d.col(o, 'main');
+    for (let i = 0; i < h; i++) {
+      const t = i / (h - 1), hw = Math.round(t * t * 9), y = B - h + i;
+      if (i > h * 0.8) { d.px(cx - hw, y, 3, 1, col); d.px(cx + hw - 2, y, 3, 1, col); } else d.px(cx - hw, y, hw * 2 + 1, 1, col);
+    }
+    [0.42, 0.68].forEach((f) => { const i = Math.round(h * f), t = i / (h - 1), hw = Math.round(t * t * 9) + 1; d.px(cx - hw, B - h + i, hw * 2 + 1, 2, o.stripes ? d.c.light : col); });
+    d.px(cx, B - h - 5, 1, 5, col);
+  },
+  needle(d, x, o, B) { // TV / observation tower
+    const h = o.h || 46, cx = x + 4, top = B - h, py = top + 8, col = d.col(o, 'main');
+    d.px(cx, top, 2, h, col); d.px(cx, top - 8, 1, 8, col);
+    if (o.ball) { d.disc(cx + 1, py, 4, col); d.px(cx - 1, py, 1, 1, d.c.win); d.px(cx + 1, py, 1, 1, d.c.win); d.px(cx + 3, py, 1, 1, d.c.win); }
+    else { d.px(cx - 4, py, 10, 2, col); d.px(cx - 3, py + 2, 8, 2, col); d.px(cx - 1, py - 3, 4, 3, col); for (let k = 0; k < 4; k++) d.px(cx - 3 + k * 2 + 1, py + 2, 1, 1, d.c.win); }
+  },
+  burj(d, x, o, B) { // stepped super-tall spike
+    const cx = x + 5, col = d.col(o, 'main'); let y = B;
+    [[11, 12], [9, 12], [7, 10], [5, 10], [3, 8], [1, 10]].forEach(([w, h]) => {
+      d.px(cx - (w >> 1), y - h, w, h, col);
+      if (w > 2) for (let yy = y - h + 2; yy < y - 1; yy += 3) d.px(cx, yy, 1, 1, d.c.win);
+      y -= h;
+    });
+  },
+  pagoda(d, x, o, B) { // tiered temple roofs
+    const t = o.t || 4, wide = o.wide ? 6 : 0, cx = x + 12 + wide, col = d.col(o, 'main'), acc = d.c.acc;
+    let y = B;
+    d.px(cx - 9 - wide, y - 2, 19 + wide * 2, 2, col); y -= 2;
+    for (let k = 0; k < t; k++) {
+      const half = 6 - k + wide, rh = half + 4;
+      d.px(cx - half, y - 4, half * 2 + 1, 4, col); d.px(cx - 1, y - 3, 3, 2, d.c.win); y -= 4;
+      d.px(cx - rh, y - 2, rh * 2 + 1, 2, acc); d.px(cx - rh - 1, y - 3, 2, 1, acc); d.px(cx + rh, y - 3, 2, 1, acc); y -= 2;
+    }
+    d.px(cx, y - 7, 1, 7, col); d.px(cx - 1, y - 5, 3, 1, acc); d.px(cx - 1, y - 2, 3, 1, acc);
+  },
+  torii(d, x, o, B) { // shrine gate
+    const h = o.h || 22, col = d.col(o, 'acc');
+    d.px(x + 3, B - h + 3, 2, h - 3, col); d.px(x + 15, B - h + 3, 2, h - 3, col);
+    d.px(x, B - h + 1, 20, 2, col); d.px(x - 1, B - h, 2, 1, col); d.px(x + 19, B - h, 2, 1, col);
+    d.px(x + 2, B - h + 6, 16, 1, col); d.px(x + 9, B - h + 3, 2, 3, col);
+  },
+  stupa(d, x, o, B) { // bell-shaped temple with spire
+    const cx = x + 8, col = d.col(o, 'acc');
+    d.px(cx - 8, B - 3, 17, 3, col); d.px(cx - 6, B - 5, 13, 2, col);
+    for (let i = 0; i < 9; i++) { const hw = Math.round(1 + Math.sqrt(i / 8) * 5); d.px(cx - hw, B - 14 + i, hw * 2 + 1, 1, col); }
+    d.px(cx - 6, B - 7, 13, 1, d.c.main); d.px(cx - 2, B - 16, 5, 2, col); d.tri(cx, B - 16, 12, col, 0.18);
+  },
+  pyramids(d, x, o, B) {
+    const col = d.col(o, 'sand'), sh = mix(col, d.c.main, 0.35);
+    [[x + 26, 26], [x + 62, 19], [x + 84, 10]].forEach(([cx, h]) => { d.tri(cx, B, h, col, 1); for (let i = 1; i < h; i++) d.px(cx + 1, B - h + i, i, 1, sh); });
+  },
+  steppyramid(d, x, o, B) {
+    const cx = x + 18, col = d.col(o, 'sand'), sh = mix(col, d.c.main, 0.3);
+    for (let k = 0; k < 5; k++) { const hw = 17 - k * 3; d.px(cx - hw, B - 4 * (k + 1), hw * 2 + 1, 4, col); d.px(cx - hw, B - 4 * (k + 1), hw * 2 + 1, 1, sh); }
+    d.px(cx - 2, B - 20, 5, 20, sh); d.px(cx - 4, B - 25, 9, 5, d.c.main);
+  },
+  dome(d, x, o, B) { // domed building, optional minarets
+    const big = o.big ? 1.4 : 1, r = Math.round(8 * big), bw = Math.round(11 * big), cx = x + 18, col = d.col(o, 'main');
+    d.px(cx - bw, B - 12, bw * 2 + 1, 12, col); d.disc(cx, B - 12, r, col);
+    d.px(cx, B - 12 - r - 4, 1, 4, col); d.px(cx - 1, B - 12 - r - 2, 3, 1, col);
+    for (let k = 0; k < 5; k++) d.px(cx - bw + 2 + k * Math.floor((bw * 2 - 2) / 5), B - 8, 2, 4, d.c.win);
+    if (o.m !== false) {
+      const mh = Math.round(30 * big);
+      [cx - bw - 6, cx + bw + 4].forEach((mx) => {
+        d.px(mx, B - mh, 3, mh, col); d.px(mx - 1, B - Math.round(mh * 0.7), 5, 1, col); d.px(mx - 1, B - Math.round(mh * 0.4), 5, 1, col); d.tri(mx + 1, B - mh, 5, col, 0.4);
+      });
+    }
+  },
+  minaret(d, x, o, B) { // square tower
+    const col = d.col(o, 'sand'), m = d.c.main;
+    d.px(x, B - 30, 8, 30, col);
+    [-24, -16, -8].forEach((dy) => d.px(x + 3, B + dy, 2, 3, m));
+    [0, 3, 6].forEach((dx) => d.px(x + dx, B - 32, 2, 2, col));
+    d.px(x + 2, B - 38, 4, 6, col); d.px(x + 3, B - 43, 2, 5, d.c.hi);
+  },
+  clocktower(d, x, o, B) {
+    const col = d.col(o, 'main');
+    if (o.hall) { d.px(x - 34, B - 14, 34, 14, col); for (let k = 0; k < 9; k++) { d.px(x - 33 + k * 4, B - 17, 1, 3, col); d.px(x - 31 + k * 4, B - 10, 1, 3, d.c.win); } }
+    d.px(x, B - 38, 9, 38, col); d.px(x + 1, B - 34, 7, 7, d.c.light); d.px(x + 4, B - 33, 1, 3, col); d.px(x + 4, B - 31, 2, 1, col);
+    d.px(x + 2, B - 24, 1, 4, d.c.win); d.px(x + 6, B - 24, 1, 4, d.c.win);
+    d.tri(x + 4, B - 38, 9, col, 0.5); d.px(x + 4, B - 50, 1, 3, col);
+  },
+  castle(d, x, o, B) {
+    const col = d.col(o, 'main');
+    d.px(x, B - 12, 40, 12, col);
+    for (let k = 0; k < 10; k++) d.px(x + k * 4, B - 14, 2, 2, col);
+    [x, x + 34].forEach((tx) => { d.px(tx, B - 20, 6, 20, col); d.tri(tx + 3, B - 20, 6, d.c.acc, 0.5); });
+    d.px(x + 15, B - 26, 10, 26, col); for (let k = 0; k < 3; k++) d.px(x + 15 + k * 4, B - 28, 2, 2, col);
+    d.px(x + 19, B - 20, 2, 3, d.c.win); d.px(x + 8, B - 8, 1, 2, d.c.win); d.px(x + 30, B - 8, 1, 2, d.c.win);
+  },
+  wall(d, x, o, B) { // crenellated wall, optional towers
+    const w = o.w || 80, col = d.col(o, 'main');
+    d.px(x, B - 6, w, 6, col); for (let k = 0; k < w; k += 4) d.px(x + k, B - 8, 2, 2, col);
+    if (o.towers) for (let k = 10; k < w - 6; k += o.towers) { d.px(x + k, B - 12, 7, 12, col); d.px(x + k + 1, B - 14, 2, 2, col); d.px(x + k + 4, B - 14, 2, 2, col); }
+  },
+  colosseum(d, x, o, B) { // round arena, broken on one side
+    const w = 46, col = d.col(o, 'sand'), m = d.c.main, ht = (i) => (i < 28 ? 20 : Math.max(9, 20 - Math.floor((i - 28) * 0.75)));
+    for (let i = 0; i < w; i++) d.px(x + i, B - ht(i), 1, ht(i), col);
+    for (const ry of [2, 8, 14]) for (let ax = x + 2; ax < x + w - 2; ax += 4) if (ry + 5 <= ht(ax - x)) d.px(ax, B - ry - 4, 2, 4, m);
+  },
+  temple(d, x, o, B) { // columns + pediment (or flat gate)
+    const w = o.w || 36, col = d.col(o, 'light'), n = Math.floor((w - 4) / 4);
+    d.px(x, B - 2, w, 2, col); d.px(x + 1, B - 4, w - 2, 2, col);
+    for (let k = 0; k < n; k++) d.px(x + 3 + k * 4, B - 14, 2, 10, col);
+    d.px(x + 1, B - 17, w - 2, 3, col);
+    if (o.flat) { d.px(x + (w >> 1) - 5, B - 21, 11, 4, col); d.px(x + (w >> 1) - 2, B - 24, 5, 3, col); }
+    else d.tri(x + (w >> 1), B - 17, 5, col, (w / 2 - 2) / 4);
+  },
+  arch(d, x, o, B) { // gateway arch
+    const col = d.col(o, 'sand'), hole = d.c.hole;
+    d.px(x, B - 22, 26, 22, col);
+    d.px(x + 8, B - 12, 10, 12, hole); d.px(x + 9, B - 14, 8, 2, hole); d.px(x + 11, B - 15, 4, 1, hole);
+    d.px(x + 1, B - 26, 4, 4, col); d.px(x + 21, B - 26, 4, 4, col); d.px(x + 9, B - 25, 8, 3, col); d.px(x + 12, B - 27, 2, 2, col);
+    d.px(x + 3, B - 16, 2, 4, d.c.main); d.px(x + 21, B - 16, 2, 4, d.c.main);
+  },
+  opera(d, x, o, B) { // shell-shaped sails
+    const col = d.col(o, 'light'), sh = mix(col, d.c.main, 0.35);
+    d.px(x - 2, B - 5, 52, 5, mix(d.c.sand, d.c.main, 0.25));
+    [[x + 2, 14], [x + 13, 19], [x + 26, 15], [x + 37, 10]].forEach(([sx, h]) => {
+      for (let i = 0; i < h; i++) { const ox = sx + Math.round(i * 0.35); d.px(ox, B - 5 - h + i, Math.max(1, Math.round(i * 0.7)), 1, col); d.px(ox, B - 5 - h + i, 1, 1, sh); }
+    });
+  },
+  spires(d, x, o, B) { // tall basilica spires
+    const col = d.col(o, 'sand'), m = o.col === 'main' ? d.c.win : d.c.main;
+    d.px(x - 2, B - 14, 28, 14, col);
+    [[0, 30], [6, 38], [12, 38], [18, 30]].forEach(([dx, h]) => {
+      d.px(x + dx, B - h, 4, h, col); d.px(x + dx + 1, B - h - 3, 2, 3, col); d.px(x + dx + 1, B - h - 5, 2, 2, d.c.hi);
+      for (let yy = B - h + 3; yy < B - 14; yy += 5) d.px(x + dx + 1, yy, 2, 2, m);
+    });
+  },
+  church(d, x, o, B) { // stepped concrete church
+    const cx = x + 22, col = d.col(o, 'light');
+    for (let k = 0; k < 5; k++) { const hh = 8 + k * 5; d.px(cx - 20 + k * 3, B - hh, 3, hh, col); d.px(cx + 17 - k * 3, B - hh, 3, hh, col); }
+    d.px(cx - 5, B - 34, 10, 34, col); d.tri(cx, B - 34, 10, col, 0.45); d.px(cx, B - 47, 1, 3, col);
+    d.px(cx - 1, B - 28, 2, 2, d.c.main);
+  },
+  houses(d, x, o, B) { // row of colorful gabled houses
+    const n = o.n || 6, c = d.c, pal = [c.acc, c.hi, c.light, c.house];
+    for (let i = 0; i < n; i++) {
+      const hx = x + i * 10, hh = 12 + ((i * 7) % 3) * 3, col = pal[i % 4];
+      d.px(hx, B - hh, 9, hh, col); d.tri(hx + 4, B - hh, 4, col, 1);
+      for (let yy = B - hh + 3; yy < B - 5; yy += 4) { d.px(hx + 2, yy, 2, 2, c.win2); d.px(hx + 5, yy, 2, 2, c.win2); }
+      d.px(hx + 4, B - 4, 2, 4, c.main);
+    }
+  },
+  santorini(d, x, o, B) { // white cubes with blue domes
+    const c = d.c;
+    [[0, 10, 10], [9, 8, 16], [16, 12, 8], [27, 9, 13], [35, 9, 18], [43, 10, 9]].forEach(([dx, w, h]) => { d.px(x + dx, B - h, w, h, c.light); d.px(x + dx + 2, B - h + 3, 2, 3, c.main); });
+    d.disc(x + 13, B - 17, 3, c.acc); d.px(x + 13, B - 23, 1, 3, c.light); d.disc(x + 39, B - 19, 3, c.acc);
+  },
+  windmill(d, x, o, B) {
+    const cx = x + 8, hy = B - 18, col = d.col(o, 'main');
+    for (let i = 0; i < 16; i++) { const hw = 2 + (i >> 2); d.px(cx - hw, B - 16 + i, hw * 2 + 1, 1, col); }
+    d.px(cx - 2, B - 19, 5, 3, col);
+    for (let k = 1; k <= 10; k++) { d.px(cx + k, hy - k, 2, 1, col); d.px(cx - k - 1, hy - k, 2, 1, col); d.px(cx + k, hy + k, 2, 1, col); d.px(cx - k - 1, hy + k, 2, 1, col); }
+  },
+  wheel(d, x, o, B) { // observation wheel
+    const r = o.r || 15, cx = x + r + 1, cy = B - r - 5, col = d.col(o, 'main');
+    for (let y = cy; y < B; y++) { const k = (y - cy) / (B - cy); d.px(cx - Math.round(k * 8), y, 1, 1, col); d.px(cx + Math.round(k * 8), y, 1, 1, col); }
+    for (let a = 0; a < 360; a += 45) { const t = (a * Math.PI) / 180; for (let k = 0; k < r; k++) d.px(cx + Math.round(Math.cos(t) * k), cy + Math.round(Math.sin(t) * k), 1, 1, d.c.far); }
+    for (let a = 0; a < 360; a += 2) { const t = (a * Math.PI) / 180; d.px(cx + Math.round(Math.cos(t) * r), cy + Math.round(Math.sin(t) * r), 1, 1, col); }
+    for (let a = 15; a < 360; a += 30) { const t = (a * Math.PI) / 180; d.px(cx + Math.round(Math.cos(t) * (r + 1)) - 1, cy + Math.round(Math.sin(t) * (r + 1)), 2, 2, d.c.acc); }
+    d.px(cx - 1, cy - 1, 3, 3, col);
+  },
+  obelisk(d, x, o, B) {
+    const h = o.h || 38, col = d.col(o, 'light');
+    d.px(x + 1, B - h + 3, 4, h - 3, col); d.px(x + 2, B - h, 2, 3, col); d.px(x, B - 3, 6, 3, col);
+    d.px(x + 2, B - h + 8, 2, 2, d.c.main);
+  },
+  statue(d, x, o, B) { // statue with open arms on a hill
+    const r = 22, cx = x + r, top = B - 16, col = d.col(o, 'main');
+    for (let dy = 0; dy < 16; dy++) { const hw = Math.round(Math.sqrt(1 - (dy / 16) ** 2) * r); d.px(cx - hw, B - dy - 1, hw * 2 + 1, 1, d.c.far); }
+    d.px(cx - 1, top - 11, 2, 11, col); d.px(cx - 6, top - 9, 13, 2, col); d.px(cx - 1, top - 13, 2, 2, col); d.px(cx - 2, top - 2, 4, 2, col);
+  },
+  palm(d, x, o, B) {
+    const h = o.h || 18, col = d.col(o, 'main');
+    for (let i = 0; i < h; i++) d.px(x + Math.round((i / h) ** 2 * 4), B - 1 - i, 2, 1, col);
+    const tx = x + 5, ty = B - h;
+    d.px(tx - 1, ty - 2, 3, 2, col);
+    for (const s of [-1, 1]) {
+      [[1, 0], [2, -1], [3, -1], [4, -1], [5, 0], [6, 0], [7, 1], [8, 2]].forEach(([dx, dy]) => d.px(tx + s * dx, ty + dy, 1, 2, col));
+      [[1, 1], [2, 1], [3, 2], [4, 3], [5, 4], [6, 6]].forEach(([dx, dy]) => d.px(tx + s * dx, ty + dy, 1, 1, col));
+    }
+  },
+  acacia(d, x, o, B) { // flat-topped savanna tree
+    const col = d.col(o, 'main');
+    d.px(x + 9, B - 12, 2, 12, col); d.px(x + 6, B - 15, 2, 4, col); d.px(x + 12, B - 15, 2, 4, col);
+    d.px(x, B - 18, 22, 3, col); d.px(x + 3, B - 20, 16, 2, col);
+  },
+  cactus(d, x, o, B) {
+    const col = d.col(o, 'main');
+    d.px(x + 3, B - 14, 3, 14, col); d.px(x, B - 9, 2, 5, col); d.px(x, B - 6, 3, 2, col); d.px(x + 7, B - 11, 2, 5, col); d.px(x + 6, B - 7, 3, 2, col);
+  },
+  terraces(d, x, o, B) { // stepped mountain terraces
+    const col = d.col(o, 'green');
+    for (let k = 0; k < 6; k++) { d.px(x + k * 4, B - 3 - k * 3, 60 - k * 8, 3, col); d.px(x + k * 4, B - 3 - k * 3, 60 - k * 8, 1, mix(col, '#ffffff', 0.25)); }
+    d.px(x + 24, B - 22, 5, 3, d.c.main); d.px(x + 31, B - 22, 4, 3, d.c.main);
+  },
+  bridge(d, x, o, B) { // suspension bridge
+    const w = o.w || 90, col = d.col(o, 'main'), cab = mix(col, d.c.sky2, 0.4), dy = B - 6, top = B - 30;
+    const t1 = x + Math.round(w * 0.22), t2 = x + Math.round(w * 0.78);
+    for (let xx = x; xx < x + w; xx++) {
+      let yy;
+      if (xx < t1) yy = top + 1 + Math.round(22 * ((t1 - xx) / (t1 - x)) ** 1.6);
+      else if (xx > t2) yy = top + 1 + Math.round(22 * ((xx - t2) / (x + w - 1 - t2)) ** 1.6);
+      else { const t = (xx - t1) / (t2 - t1); yy = top + 1 + Math.round(20 * (1 - (2 * t - 1) ** 2)); }
+      if (yy < dy) { if (xx % 3 === 0) d.px(xx, yy + 1, 1, dy - yy - 1, cab); d.px(xx, yy, 1, 1, col); }
+    }
+    d.px(x, dy, w, 2, col);
+    [t1, t2].forEach((t) => { d.px(t - 1, top, 3, H - top, col); d.px(t - 2, top + 6, 5, 1, col); d.px(t - 2, top + 14, 5, 1, col); });
+  },
+  archbridge(d, x, o, B) { // steel arch bridge
+    const w = o.w || 80, col = d.col(o, 'main'), cab = mix(col, d.c.sky2, 0.4), dy = B - 7, a0 = x + 8, a1 = x + w - 9;
+    for (let xx = a0; xx <= a1; xx++) {
+      const t = (xx - a0) / (a1 - a0), yy = Math.round(B - 2 - 24 * (1 - (2 * t - 1) ** 2));
+      if (yy < dy - 2 && xx % 3 === 0) d.px(xx, yy + 2, 1, dy - yy - 2, cab);
+      d.px(xx, yy, 1, 2, col);
+    }
+    d.px(x, dy, w, 2, col); d.px(x + 2, B - 14, 5, H - B + 14, col); d.px(x + w - 7, B - 14, 5, H - B + 14, col);
+  },
+  water(d) { // sea / river across the bottom
+    d.px(0, G + 2, W, H - G - 2, d.c.water);
+    for (let yy = G + 3; yy < H; yy += 2) for (let xx = (yy * 5) % 9; xx < W; xx += 9) d.px(xx, yy, 3, 1, d.c.wave);
+  },
+  boat(d, x, o) { // sailboat or gondola on the water
+    const y = G + 5, col = d.col(o, 'main');
+    if (o.gondola) { d.px(x, y, 14, 2, col); d.px(x - 2, y - 2, 2, 2, col); d.px(x + 14, y - 3, 2, 3, col); d.px(x + 9, y - 7, 2, 7, col); d.px(x + 9, y - 9, 2, 2, col); d.px(x + 7, y - 6, 1, 9, col); }
+    else { d.px(x, y, 12, 2, col); d.px(x + 1, y + 2, 10, 1, col); d.px(x + 5, y - 10, 1, 10, col); for (let i = 0; i < 9; i++) d.px(x + 6, y - 10 + i, Math.floor(i * 0.6) + 1, 1, d.c.light); }
+  },
+};
+
+/* --- Sky, by time of day --- */
+const SKIES = {
+  night: ['#0b0f2b', '#121a42', '#1b2453', '#273069'],
+  dawn: ['#3d4f8f', '#8a6aa6', '#e48f9a', '#ffc98b'],
+  day: ['#4aa3e6', '#69b8ee', '#8fccf3', '#bde2f8'],
+  dusk: ['#2b2350', '#6b3a6e', '#c4566a', '#f39a5b'],
+};
+function phaseAt(date = new Date()) {
+  const h = date.getHours();
+  return h >= 21 || h < 5 ? 'night' : h < 8 ? 'dawn' : h < 17 ? 'day' : 'dusk';
+}
+function skyFor(place, phase) {
+  const tint = phase === 'day' ? place.colors.hi : place.colors.bg;
+  return SKIES[phase].map((c) => mix(c, tint, phase === 'day' ? 0.12 : 0.15));
+}
+
+// Painter helpers bound to one canvas context.
+function painter(ctx) {
+  const px = (x, y, w, h, col) => { if (w > 0 && h > 0) { ctx.fillStyle = col; ctx.fillRect(Math.round(x), Math.round(y), Math.round(w), Math.round(h)); } };
+  return {
+    px,
+    tri: (cx, base, h, col, s = 1) => { for (let i = 0; i < h; i++) { const hw = Math.floor(i * s); px(cx - hw, base - h + i, hw * 2 + 1, 1, col); } },
+    disc: (cx, cy, r, col) => { for (let dy = -r; dy <= r; dy++) { const hw = Math.floor(Math.sqrt(r * r - dy * dy)); px(cx - hw, cy + dy, hw * 2 + 1, 1, col); } },
+  };
+}
+
+// Draw a place's landmarks onto a transparent offscreen canvas (cached per place + phase).
+function buildScene(place, phase) {
+  const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const p = place.colors, sky = skyFor(place, phase), night = phase === 'night';
+  const dim = (col) => (night ? mix(col, '#000000', 0.4) : phase === 'day' ? col : mix(col, '#000000', 0.15));
+  const darkest = Object.values(p).reduce((a, b) => (lum(a) < lum(b) ? a : b));
+  const c = {
+    main: night ? mix(darkest, '#000000', 0.3) : darkest,
+    acc: dim(p.accent), hi: dim(p.hi), light: dim('#f3eee2'), sand: dim(mix(p.accent, '#f0d9a0', 0.5)),
+    green: dim('#5f9c45'), house: dim(mix(p.accent, p.hi, 0.5)), snow: night ? '#aab3c8' : '#f4f6fa',
+    sky2: sky[2], hole: sky[3],
+    aurora1: mix(sky[0], '#5dffb4', 0.6), aurora2: mix(sky[0], '#5dffb4', 0.25),
+  };
+  c.far = mix(c.main, sky[2], 0.45);
+  c.win = night || phase === 'dusk' ? '#ffd86b' : mix(c.main, sky[1], 0.35);
+  c.winFar = mix(c.win, c.far, 0.45);
+  c.win2 = night ? '#ffd86b' : c.main;
+  c.water = mix(sky[3], c.main, 0.55); c.wave = mix(sky[3], '#ffffff', 0.25);
+
+  const d = { ...painter(cv.getContext('2d')), c, phase, col: (o, def) => c[o.col || def] || c[def] };
+  d.px(0, G, W, H - G, c.main); // ground
+  for (const [name, x = 0, o = {}] of place.scene) SHAPES[name]?.(d, x, o, G - (o.y || 0));
+  return cv;
+}
+
+// Full banner frame: sky → sun/moon/stars → clouds/birds → landmarks.
+function drawFrame(ctx, place, phase, scene, tick) {
+  const d = painter(ctx), sky = skyFor(place, phase), bands = [0, 14, 28, 40, H];
+  for (let b = 0; b < 4; b++) d.px(0, bands[b], W, bands[b + 1] - bands[b], sky[b]);
+  for (let b = 1; b < 4; b++) for (let x = 0; x < W; x++) { // dithered band edges
+    if (x % 2 === 0) d.px(x, bands[b], 1, 1, sky[b - 1]);
+    if (x % 4 === 1) d.px(x, bands[b] + 1, 1, 1, sky[b - 1]);
+  }
+  if (phase === 'night') {
+    const r = rng(7);
+    for (let i = 0; i < 46; i++) {
+      const x = Math.floor(r() * W), y = Math.floor(r() * 40), tw = (tick + i * 7) % 29 < 3;
+      d.px(x, y, 1, 1, tw ? '#5a628a' : i % 5 === 0 ? '#ffffff' : '#c9cfee');
+    }
+    d.disc(28, 12, 5, '#f4f1de'); d.disc(31, 10, 4, sky[0]); // crescent moon
+  } else {
+    const sun = { day: [160, 12, 5, '#fff3b0'], dawn: [34, 44, 8, '#ffb36b'], dusk: [164, 44, 9, '#ff8a5b'] }[phase];
+    d.disc(sun[0], sun[1], sun[2], sun[3]);
+    const cloud = phase === 'day' ? '#ffffff' : mix(sky[2], '#ffffff', 0.5);
+    [[20, 8, 0.12], [110, 19, 0.07]].forEach(([x0, y, sp], i) => {
+      const x = Math.floor(((x0 + tick * sp) % (W + 24)) - 24);
+      d.px(x + 3, y, 8 + i * 2, 2, cloud); d.px(x, y + 2, 16 + i * 2, 3, cloud);
+    });
+    [[0, 22], [70, 28]].forEach(([off, y0]) => { // two flapping birds
+      const x = Math.floor(((tick * 0.5 + off) % (W + 40)) - 20), y = y0 + Math.round(Math.sin(tick / 6 + off) * 2), up = (tick >> 1) % 2;
+      const col = mix(sky[0], '#000000', 0.5);
+      if (up) { d.px(x, y, 1, 1, col); d.px(x + 1, y + 1, 1, 1, col); d.px(x + 2, y + 2, 1, 1, col); d.px(x + 3, y + 1, 1, 1, col); d.px(x + 4, y, 1, 1, col); }
+      else { d.px(x, y + 1, 2, 1, col); d.px(x + 2, y + 2, 1, 1, col); d.px(x + 3, y + 1, 2, 1, col); }
+    });
+  }
+  ctx.drawImage(scene, 0, 0);
+}
+
+/* ===================== App state ===================== */
+const state = { goals: load(), day: todayStr(), preview: 0, editingId: null };
+const N = PLACES.length;
+const placeIndex = () => (((dayOfYear(state.day) + state.preview) % N) + N) % N;
+const currentPlace = () => PLACES[placeIndex()];
+
+/* ===================== Theme + banner ===================== */
+const canvas = $('#scene'), ctx = canvas.getContext('2d');
+ctx.imageSmoothingEnabled = false;
+let sceneCache = { key: '', cv: null }, tick = 0;
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function drawBanner() {
+  const place = currentPlace(), phase = phaseAt(), key = placeIndex() + phase;
+  if (sceneCache.key !== key) sceneCache = { key, cv: buildScene(place, phase) };
+  drawFrame(ctx, place, phase, sceneCache.cv, tick);
+}
+
+function applyTheme() {
+  const p = currentPlace(), vars = themeVars(p), root = document.documentElement.style;
+  for (const [k, v] of Object.entries(vars)) root.setProperty('--' + k, v);
+  $('meta[name="theme-color"]').content = p.colors.bg;
+  $('#greet').textContent = p.greeting + '!';
+  $('#place').innerHTML = `${esc(p.city)} <small>${esc(p.country)}</small>`;
+  $('#date').textContent = fmtLong(state.day);
+  $('#pv-bar').hidden = state.preview === 0;
+  $('#pv-label').textContent = `PREVIEW ${placeIndex() + 1}/${N}`;
+  drawBanner();
+}
+
+/* ===================== Goal math ===================== */
+function stats(g, T) {
+  const total = diffDays(g.start, g.end) + 1;
+  const last = T < g.end ? T : g.end;
+  const elapsed = T < g.start ? 0 : diffDays(g.start, last) + 1;
+  let done = 0;
+  for (const [d, v] of Object.entries(g.marks)) if (v === 1 && d >= g.start && d <= g.end) done++;
+  let streak = 0, d = last;
+  if (elapsed) {
+    if (d === T && g.marks[d] !== 1) d = addDays(d, -1); // today not ticked yet doesn't break the streak
+    while (d >= g.start && g.marks[d] === 1) { streak++; d = addDays(d, -1); }
+  }
+  return { total, elapsed, done, streak, pct: elapsed ? Math.round((done / elapsed) * 100) : 0 };
+}
+
+/* ===================== Rendering ===================== */
+const markIcon = (st) => (st === 1 ? ICON.check : st === 2 ? ICON.cross : '');
+
+function render() {
+  const T = state.day, active = [], upcoming = [], archived = [];
+  state.goals.forEach((g) => (g.end < T ? archived : g.start > T ? upcoming : active).push(g));
+
+  // Today
+  const doneToday = active.filter((g) => g.marks[T] === 1).length;
+  $('#today-count').textContent = active.length ? `${doneToday}/${active.length}` : '';
+  $('#today-list').innerHTML = active.length ? active.map((g) => {
+    const st = g.marks[T] || 0, s = stats(g, T);
+    return `<button class="t-item s${st}" type="button" data-action="cycle" data-id="${esc(g.id)}" data-date="${T}"
+      aria-label="${esc(g.name)}: ${STATE_NAME[st]} today. Tap to change.">
+      <span class="t-emoji">${g.emoji ? esc(g.emoji) : ICON.star}</span>
+      <span class="t-name">${esc(g.name)}<small>${s.done}/${s.total} DAYS · ${ICON.flame}${s.streak}</small></span>
+      <span class="t-box">${markIcon(st)}</span></button>`;
+  }).join('') : '<p class="empty">No active goals yet.<br>Tap "+ NEW" to start one.</p>';
+
+  // Goals
+  const list = [...active, ...upcoming];
+  $('#goal-list').innerHTML = list.length ? list.map((g) => goalCard(g, T)).join('') : '<p class="empty">Nothing here yet.</p>';
+
+  // Archive
+  archived.sort((a, b) => b.end.localeCompare(a.end));
+  $('#archive').hidden = !archived.length;
+  $('#archive-count').textContent = archived.length;
+  $('#archive-list').innerHTML = archived.map((g) => goalCard(g, T)).join('');
+}
+
+function goalCard(g, T) {
+  const s = stats(g, T), id = esc(g.id), inRange = T >= g.start && T <= g.end;
+  const todayCol = inRange ? weekdayIdx(T) : -1;
+  const head = ['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((l, i) => `<span class="wd${i === todayCol ? ' now' : ''}">${l}</span>`).join('');
+  let cells = '<span class="blank"></span>'.repeat(weekdayIdx(g.start));
+  for (const d of dateList(g.start, g.end)) {
+    const st = g.marks[d] || 0, dt = parse(d), num = dt.getDate() === 1 ? MON[dt.getMonth()] : dt.getDate();
+    cells += `<button class="day s${st}${d === T ? ' today' : ''}" type="button" data-action="cycle" data-id="${id}" data-date="${d}"${d > T ? ' disabled' : ''}
+      aria-label="${fmtShort(d)}${d === T ? ' (today)' : ''}: ${STATE_NAME[st]}"><span class="dnum">${num}</span>${markIcon(st)}</button>`;
+  }
+  const status = g.end < T ? 'FINISHED' : g.start > T ? `STARTS IN ${diffDays(T, g.start)}D` : g.end === T ? 'LAST DAY' : `${diffDays(T, g.end)}D LEFT`;
+  return `<article class="goal${g.end < T ? ' done-goal' : ''}">
+    <div class="g-head">
+      <span class="g-emoji">${g.emoji ? esc(g.emoji) : ICON.star}</span>
+      <div class="g-title"><h3>${esc(g.name)}</h3>
+        <p class="g-meta">${g.period.toUpperCase()} · ${fmtShort(g.start)} – ${fmtShort(g.end)} · ${status}</p></div>
+      <div class="g-actions">
+        <button class="mini" type="button" data-action="edit" data-id="${id}" aria-label="Edit ${esc(g.name)}">EDIT</button>
+        <button class="mini" type="button" data-action="delete" data-id="${id}" aria-label="Delete ${esc(g.name)}">DEL</button>
+      </div>
+    </div>
+    <div class="days">${head}${cells}</div>
+    <div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${s.pct}" aria-label="Progress so far">
+      <i style="width:${s.pct}%"></i></div>
+    <div class="stats"><b>${s.pct}% SO FAR</b><span>${ICON.flame} ${s.streak} STREAK</span><span>${s.done} OF ${s.total} DAYS DONE</span></div>
+  </article>`;
+}
+
+/* ===================== Actions ===================== */
+function cycle(id, date, fromToday) {
+  const g = state.goals.find((x) => x.id === id);
+  if (!g || date > state.day || date < g.start || date > g.end) return;
+  const next = ((g.marks[date] || 0) + 1) % 3;
+  if (next) g.marks[date] = next; else delete g.marks[date];
+  save(); render();
+  // Pop animation + keep keyboard focus on the same control.
+  const sel = `[data-id="${CSS.escape(id)}"][data-date="${date}"]`;
+  document.querySelectorAll(sel).forEach((el) => el.classList.add('pop'));
+  document.querySelector((fromToday ? '.t-item' : '.day') + sel)?.focus({ preventScroll: true });
+}
+
+function removeGoal(id) {
+  const g = state.goals.find((x) => x.id === id);
+  if (g && confirm(`Delete "${g.name}"? This can't be undone.`)) { state.goals = state.goals.filter((x) => x !== g); save(); render(); }
+}
+
+/* --- New / edit form --- */
+const dlg = $('#goal-dialog'), form = $('#goal-form');
+const getPeriod = () => form.querySelector('input[name="period"]:checked').value;
+
+function formRange() {
+  const period = getPeriod(), g = state.goals.find((x) => x.id === state.editingId);
+  if (period === 'custom') return [$('#f-start').value, $('#f-end').value];
+  if (g && g.period === period) return [g.start, g.end]; // editing: keep existing dates
+  return period === 'weekly' ? weekRange(state.day) : monthRange(state.day);
+}
+function updateHint() {
+  $('#custom-dates').hidden = getPeriod() !== 'custom';
+  const [a, b] = formRange();
+  $('#form-hint').textContent = a && b && a <= b ? `${fmtLong(a)} → ${fmtLong(b)} (${diffDays(a, b) + 1} days)` : '';
+  $('#form-error').textContent = '';
+}
+function openForm(id) {
+  const g = state.goals.find((x) => x.id === id);
+  state.editingId = g ? g.id : null;
+  $('#form-title').textContent = g ? 'EDIT GOAL' : 'NEW GOAL';
+  $('#f-name').value = g?.name || '';
+  $('#f-emoji').value = g?.emoji || '';
+  form.querySelector(`input[name="period"][value="${g?.period || 'weekly'}"]`).checked = true;
+  $('#f-start').value = g?.start || state.day;
+  $('#f-end').value = g?.end || addDays(state.day, 29);
+  updateHint();
+  dlg.showModal();
+}
+function submitForm(e) {
+  e.preventDefault();
+  const name = $('#f-name').value.trim(), [start, end] = formRange(), err = $('#form-error');
+  if (!name) { err.textContent = 'Give your goal a name.'; return $('#f-name').focus(); }
+  if (!DATE_RE.test(start) || !DATE_RE.test(end)) { err.textContent = 'Pick a start and end date.'; return; }
+  if (end < start) { err.textContent = 'End date must be after the start.'; return; }
+  if (diffDays(start, end) > 730) { err.textContent = 'Keep it under 2 years.'; return; }
+  const fields = { name: name.slice(0, 40), emoji: $('#f-emoji').value.trim().slice(0, 8), period: getPeriod(), start, end };
+  const g = state.goals.find((x) => x.id === state.editingId);
+  if (g) Object.assign(g, fields); else state.goals.push({ id: uid(), ...fields, marks: {} });
+  save(); render(); dlg.close();
+}
+
+/* --- Export / import --- */
+function exportData() {
+  const blob = new Blob([JSON.stringify({ app: 'pixel-goals', version: 1, exported: new Date().toISOString(), goals: state.goals }, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = `goals-backup-${state.day}.json`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+async function importData(file) {
+  try {
+    const data = JSON.parse(await file.text());
+    const goals = (Array.isArray(data) ? data : data.goals || []).filter(validGoal).map(cleanGoal);
+    if (!goals.length) return alert('No goals found in that file.');
+    if (confirm(`Replace your ${state.goals.length} goal(s) with ${goals.length} from the backup?`)) { state.goals = goals; save(); render(); }
+  } catch { alert("That file isn't a valid backup."); }
+}
+
+/* ===================== Wiring ===================== */
+document.addEventListener('click', (e) => {
+  const el = e.target.closest('[data-action]');
+  if (!el) return;
+  const { action, id, date } = el.dataset;
+  if (action === 'cycle') cycle(id, date, el.classList.contains('t-item'));
+  else if (action === 'edit') openForm(id);
+  else if (action === 'delete') removeGoal(id);
+});
+$('#add-btn').addEventListener('click', () => openForm(null));
+$('#cancel-btn').addEventListener('click', () => dlg.close());
+form.addEventListener('submit', submitForm);
+form.addEventListener('change', updateHint);
+dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); }); // tap backdrop to close
+$('#emoji-picks').innerHTML = ['🏃', '📚', '💧', '🧘', '💪', '🥗', '😴', '✍️', '🎸', '🧹', '💰', '🚭']
+  .map((em) => `<button type="button" class="pick" data-emoji="${em}" aria-label="Use ${em}">${em}</button>`).join('');
+$('#emoji-picks').addEventListener('click', (e) => { const b = e.target.closest('[data-emoji]'); if (b) $('#f-emoji').value = b.dataset.emoji; });
+
+$('#export-btn').addEventListener('click', exportData);
+$('#import-btn').addEventListener('click', () => $('#import-file').click());
+$('#import-file').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) importData(f); e.target.value = ''; });
+
+// Preview other places (doesn't touch saved data)
+$('#pv-prev').innerHTML = ICON.left;
+$('#pv-next').innerHTML = ICON.right;
+$('#pv-prev').addEventListener('click', () => { state.preview--; applyTheme(); });
+$('#pv-next').addEventListener('click', () => { state.preview++; applyTheme(); });
+$('#pv-reset').addEventListener('click', () => { state.preview = 0; applyTheme(); });
+
+// New day at midnight (or when the phone wakes up): new place, re-render.
+function checkDay() {
+  const t = todayStr();
+  if (t !== state.day) { state.day = t; applyTheme(); render(); } else drawBanner();
+}
+setInterval(checkDay, 30000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) checkDay(); });
+
+// Animate banner at a chunky ~8 fps.
+if (!reduceMotion) {
+  let last = 0;
+  const loop = (t) => { if (t - last > 125) { last = t; tick++; drawBanner(); } requestAnimationFrame(loop); };
+  requestAnimationFrame(loop);
+}
+
+applyTheme();
+render();
+</script>
+</body>
+</html>
